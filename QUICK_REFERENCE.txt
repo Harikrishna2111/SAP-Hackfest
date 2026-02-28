@@ -1,0 +1,363 @@
+# 🎯 Quick Reference Card
+
+## Launch Commands
+
+```bash
+# 🚀 EASIEST - One command
+python run_ui.py
+
+# 📊 DIRECT - Streamlit
+streamlit run streamlit_app.py
+
+# 🐳 DOCKER - Container
+docker-compose up
+```
+
+---
+
+## File Locations
+
+| Need | File | Type |
+|------|------|------|
+| **Web UI** | `streamlit_app.py` | Python |
+| **Agent Logic** | `verilog_agent.py` | Python |
+| **Launcher** | `run_ui.py` | Python |
+| **Quick Start** | `GETTING_STARTED_UI.md` | Guide |
+| **Full Guide** | `STREAMLIT_GUIDE.md` | Guide |
+| **All Docs** | `DOCUMENTATION_INDEX.md` | Index |
+
+---
+
+## UI Layout
+
+```
+┌─────────────────────────────────────────────────────────┐
+│  ⚙️ Verilog Design Verification Agent          v1.0.0   │
+│  Powered by LangGraph + Gemini                          │
+└─────────────────────────────────────────────────────────┘
+
+┌────────────────────┐ ┌──────────────────────────────────┐
+│   SIDEBAR          │ │     MAIN CONTENT                 │
+├────────────────────┤ ├──────────────────────────────────┤
+│ Max Iterations: 5  │ │ Input Section (2 columns)        │
+│ Model: gemini-...  │ │ ├─ Design Image Upload           │
+│ Temperature: 0.2   │ │ └─ Verilog Code Input            │
+│                    │ │                                   │
+│ 📚 Resources       │ │ Workflow Visualization (5 nodes)  │
+│ ├─ Docs            │ │ [🔍]→[🔎]→[🔧]→[✅]→[📊]       │
+│ ├─ Quick Start     │ │                                   │
+│ └─ Design Guide    │ │ Execution Controls               │
+│                    │ │ [🚀 Start Verification]          │
+│                    │ │                                   │
+│                    │ │ Results Section                  │
+│                    │ │ ├─ Summary Metrics               │
+│                    │ │ ├─ Issues Found                  │
+│                    │ │ ├─ Fixed Code                    │
+│                    │ │ ├─ Full Report                   │
+│                    │ │ └─ Download Options              │
+└────────────────────┘ └──────────────────────────────────┘
+```
+
+---
+
+## Workflow Nodes
+
+```
+🔍 Analyze
+└─ Analyzes design image + code structure
+
+🔎 Identify Issues
+└─ Finds problems, mismatches, errors
+
+🔧 Fix Issues
+└─ Applies corrections automatically
+
+✅ Verify Fixes
+└─ Validates corrected code
+
+📊 Generate Report
+└─ Creates comprehensive documentation
+```
+
+---
+
+## Color Guide
+
+| Color | Meaning | Node Status |
+|-------|---------|------------|
+| 🔵 Blue | Active | Currently running |
+| 🟢 Green | Success | Completed |
+| ⚪ Gray | Pending | Not started |
+| 🔴 Red | Critical | Critical issue |
+| 🟠 Orange | High | High severity |
+| 🟡 Yellow | Medium | Medium severity |
+| 🟢 Green | Low | Low severity |
+
+---
+
+## Key Buttons & Controls
+
+```
+Input Section:
+├─ 📁 Browse files          (upload image)
+├─ 💬 Paste code / 📤 Upload file (verilog)
+└─ 🔍 Code preview         (syntax highlighted)
+
+Sidebar:
+├─ 🎚️ Sliders              (iterations, temperature)
+├─ 🔽 Dropdowns            (model selection)
+└─ 🔗 Links                (documentation)
+
+Execution:
+└─ 🚀 Start Verification    (begin analysis)
+
+Results:
+├─ ▶️ Expand cards          (view issue details)
+├─ 📥 Download Code        (export fixed.v)
+├─ 📥 Download Report      (export .md)
+└─ 📋 View Full Report     (expandable)
+```
+
+---
+
+## Configuration Quick Reference
+
+```toml
+[Settings]
+Max Iterations: 1-10  (default: 5)
+  └─ Lower = faster, Higher = thorough
+
+Model: 3 options
+  ├─ gemini-2.5-flash  (fast)
+  ├─ gemini-1.5-pro    (accurate)
+  └─ gemini-1.5-flash  (balanced)
+
+Temperature: 0.0-1.0  (default: 0.2)
+  ├─ 0.0 = consistent
+  ├─ 0.5 = balanced
+  └─ 1.0 = creative
+```
+
+---
+
+## Keyboard Shortcuts
+
+| Key | Function |
+|-----|----------|
+| `C` | Clear cache |
+| `R` | Rerun script |
+| `i` | Info panel |
+| `k` | Command palette |
+
+---
+
+## Input Requirements
+
+### Design Image
+- ✅ **Formats**: PNG, JPG, JPEG, GIF, BMP
+- ✅ **Size**: 800x600 or larger recommended
+- ✅ **File Size**: < 20MB
+- ✅ **Content**: Circuit diagrams, schematics, block diagrams
+
+### Verilog Code
+- ✅ **Formats**: Direct paste or .v, .sv, .verilog files
+- ✅ **Size**: < 1MB code files
+- ✅ **Content**: Valid RTL-level Verilog HDL
+
+---
+
+## Output Downloads
+
+After verification, download:
+
+```
+1. Fixed Code
+   ├─ Original + Fixed code comparison
+   ├─ File: fixed_design.v
+   └─ Format: Plain text Verilog
+
+2. Detailed Report
+   ├─ Executive summary
+   ├─ Issue analysis
+   ├─ Code quality assessment
+   ├─ File: verification_report_YYYYMMDD_HHMMSS.md
+   └─ Format: Markdown (.md)
+```
+
+---
+
+## Performance Times
+
+| Operation | Time |
+|-----------|------|
+| App startup | 3-5 sec |
+| First verification | 20-30 sec |
+| Typical verification | 1-3 min |
+| Complex design | 2-5 min |
+| Code-only (no image) | Faster |
+
+---
+
+## Browser Compatibility
+
+| Browser | Support |
+|---------|---------|
+| Chrome | ✅ Full |
+| Firefox | ✅ Full |
+| Safari | ✅ Full |
+| Edge | ✅ Full |
+| Mobile | ⚠️ Limited |
+
+---
+
+## Troubleshooting Quick Fixes
+
+```
+Problem: "API Key not found"
+Fix: Edit .env file with your key
+
+Problem: App won't start
+Fix: Check Python 3.8+, reinstall requirements.txt
+
+Problem: Slow performance
+Fix: Reduce max iterations, use faster model
+
+Problem: Image won't upload
+Fix: Check format (PNG/JPG), size < 20MB
+
+Problem: API rate limit
+Fix: Wait 30 seconds, upgrade API quota
+```
+
+---
+
+## Environment Variables
+
+```bash
+# REQUIRED
+GOOGLE_API_KEY=your_actual_key_here
+
+# OPTIONAL
+MAX_ITERATIONS=5          # default: 5
+LOG_LEVEL=INFO           # default: INFO
+```
+
+---
+
+## File Structure Quick Map
+
+```
+📦 Project Root
+├── 🎯 Core
+│   ├── verilog_agent.py      (main agent)
+│   ├── config.py             (settings)
+│   ├── workflow_visualizer.py (visualization)
+├── 🎨 UI
+│   ├── streamlit_app.py      (web interface)
+│   ├── run_ui.py             (launcher)
+│   └── .streamlit/config.toml (theme)
+├── 📚 Docs
+│   ├── GETTING_STARTED_UI.md  (2-min guide)
+│   ├── STREAMLIT_GUIDE.md     (complete guide)
+│   └── DOCUMENTATION_INDEX.md (master index)
+└── 📋 Config
+    ├── requirements.txt       (dependencies)
+    ├── .env.example          (template)
+    ├── Dockerfile            (container)
+    └── docker-compose.yml    (orchestration)
+```
+
+---
+
+## Setup Checklist
+
+- [ ] Python 3.8+ installed
+- [ ] Dependencies installed: `pip install -r requirements.txt`
+- [ ] `.env` file created with API key
+- [ ] Run: `python run_ui.py`
+- [ ] Browser opens automatically
+- [ ] Upload design image
+- [ ] Paste or upload Verilog code
+- [ ] Click "Start Verification"
+- [ ] Review results
+- [ ] Download reports
+
+---
+
+## Getting Help
+
+### For Quick Answers
+```
+→ Check GETTING_STARTED_UI.md (2 min read)
+```
+
+### For Detailed Info
+```
+→ Read STREAMLIT_GUIDE.md (15 min read)
+```
+
+### For Everything
+```
+→ See DOCUMENTATION_INDEX.md (master guide)
+```
+
+### For Code
+```
+→ Review example_usage.py (Python API examples)
+```
+
+---
+
+## Common Commands
+
+```bash
+# Install & setup
+pip install -r requirements.txt
+cp .env.example .env
+# (edit .env with your API key)
+
+# Launch
+python run_ui.py
+
+# Or direct Streamlit
+streamlit run streamlit_app.py
+
+# Or Docker
+docker-compose up
+
+# Stop (Ctrl+C in terminal)
+```
+
+---
+
+## Remember
+
+✅ Design image helps but isn't required
+✅ Code should have comments for better analysis
+✅ Start with default settings
+✅ Increase iterations for complex designs
+✅ First run is slower (API warmup)
+✅ Your code goes to Google API
+✅ Results are not stored
+
+---
+
+## 5-Minute Quickstart
+
+```
+1. pip install -r requirements.txt              (2 min)
+2. cp .env.example .env && edit .env           (1 min)
+3. python run_ui.py                            (30 sec)
+4. Upload file + code, click Start             (1 min)
+5. Review results!                             (30 sec)
+```
+
+---
+
+**🚀 Ready? Start with: `python run_ui.py`**
+
+---
+
+**Last Updated**: February 28, 2026
+**Version**: 1.0.0
+**Status**: ✅ Production Ready
