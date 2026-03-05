@@ -1,0 +1,25 @@
+* Testbench for modamp operational amplifier
+* This is a SPICE netlist that Xyce can simulate
+
+* Include the Verilog-AMS module (if compiled to SPICE)
+* Or use SPICE subcircuit definition
+
+* Power supplies
+VDD vdd 0 DC 15V
+VSS vss 0 DC -15V
+
+* Input signals
+VIN1 inp 0 SIN(0 1V 1kHz)
+VIN2 inn 0 DC 0V
+
+* Load
+RL outp 0 10k
+
+* Instantiate the amplifier
+* X1 inp inn outp modamp
+
+* Analysis
+.TRAN 0.01ms 5ms
+.PRINT TRAN V(inp) V(inn) V(outp)
+
+.END

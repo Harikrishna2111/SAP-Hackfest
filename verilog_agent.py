@@ -31,6 +31,7 @@ class AgentState(TypedDict):
     analysis_history: List[str]
     final_report: str
     status: str  # 'analyzing', 'fixing', 'verified', 'failed'
+    design_image_path: Optional[str]
 
 
 class VerilogVerificationAgent:
@@ -213,6 +214,10 @@ class VerilogVerificationAgent:
         # Get the latest analysis
         latest_analysis = state["analysis_history"][-1]
         
+        waveform_context = ""
+        if state.get("design_image_path"):
+            waveform_context = "\n\nNote: A waveform diagram is available showing the signal behavior. Consider timing and signal transitions when identifying issues."
+        
         prompt = f"""
         You are an expert hardware design verification engineer.
         
@@ -224,7 +229,7 @@ class VerilogVerificationAgent:
         Current Verilog Code:
         ```verilog
         {state["current_code"]}
-        ```
+        ```{waveform_context}
         
         Identify:
         1. Mismatches between the datasheet specifications and code implementation
@@ -473,7 +478,7 @@ class VerilogVerificationAgent:
         
         return state
     
-    def run(self, datasheet_path: str, verilog_code: str, datasheet_content: str = "") -> dict:
+    def run(self, datasheet_path: str, verilog_code: str, datasheet_content: str = "", design_image_path: str = None) -> dict:
         """
         Run the verification agent
         
@@ -481,6 +486,7 @@ class VerilogVerificationAgent:
             datasheet_path: Path to the component datasheet (PDF or text)
             verilog_code: Verilog code as string
             datasheet_content: Pre-extracted datasheet content (optional)
+            design_image_path: Path to waveform or design image (optional)
             
         Returns:
             Final state with report
@@ -502,7 +508,8 @@ class VerilogVerificationAgent:
             "fixes_applied": [],
             "analysis_history": [],
             "final_report": "",
-            "status": "initializing"
+            "status": "initializing",
+            "design_image_path": design_image_path
         }
         
         # Run the workflow

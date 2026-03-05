@@ -1,0 +1,62 @@
+* Simplified Operational Amplifier Model for Xyce
+* Based on modamp Verilog-AMS module
+
+.SUBCKT modamp inp inn outp vdd vss
+* Simplified behavioral op-amp model
+
+* Input stage - differential pair with bias currents
+IB1 inp 0 DC 80n
+IB2 inn 0 DC 80n
+RD1 inp n7 1Meg
+RD2 inn n9 1Meg
+CD inp inn 1p
+
+* Voltage offset
+VOFF n7 n8 DC 3.5m
+
+* Differential gain stage
+EDIFF n11 0 n7 n9 1e6
+
+* Slew rate limiter (simplified with resistor)
+RSLEW n11 n12 1k
+CSLEW n12 0 0.2u
+
+* First pole (dominant)
+EPOLE1 n3 0 n12 0 1e6
+RPOLE1 n3 0 1Meg
+CPOLE1 n3 0 0.159u
+
+* Second pole
+EPOLE2 n5 0 n3 0 1
+RPOLE2 n5 0 1
+CPOLE2 n5 0 53n
+
+* Output stage with current limit
+EOUT n4 0 n5 0 1
+ROUT n4 outp 75
+ILIM outp 0 LIMIT=-35m 35m
+
+* Voltage limiter
+VLIM outp 0 LIMIT=-14 14
+
+.ENDS modamp
+
+* Testbench
+VDD vdd 0 DC 15
+VSS vss 0 DC -15
+
+* Input signals - differential sine wave
+VIN1 inp 0 SIN(0 0.1 1k)
+VIN2 inn 0 DC 0
+
+* Instantiate op-amp
+X1 inp inn outp vdd vss modamp
+
+* Load resistor
+RL outp 0 10k
+
+* Transient analysis
+.TRAN 0.01m 5m
+.PRINT TRAN V(inp) V(inn) V(outp) I(RL)
+
+.END

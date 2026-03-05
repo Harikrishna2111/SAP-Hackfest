@@ -1,0 +1,15 @@
+* Simple RC Circuit Test for Xyce
+* Basic circuit to verify Xyce is working
+
+* Voltage source
+VIN in 0 SIN(0 5 1k)
+
+* RC circuit
+R1 in out 1k
+C1 out 0 1u
+
+* Transient analysis
+.TRAN 1u 5m
+.PRINT TRAN V(in) V(out)
+
+.END

@@ -13,6 +13,8 @@ from typing import Optional
 
 from verilog_agent import VerilogVerificationAgent
 from config import Config
+from waveform_generator import WaveformGenerator
+import subprocess
 try:
     from workflow_visualizer import WorkflowVisualizer
 except ImportError:
@@ -199,7 +201,7 @@ def input_section():
     """Render the input section for datasheet and code"""
     st.header("📥 Input")
     
-    col1, col2 = st.columns(2)
+    col1, col2, col3 = st.columns([2, 2, 1])
     
     # Datasheet Input
     with col1:
@@ -274,9 +276,109 @@ def input_section():
                 verilog_code = uploaded_code.read().decode("utf-8")
                 st.code(verilog_code, language="verilog")
     
+    # Waveform Generation
+    with col3:
+        st.subheader("📊 Waveform")
+        
+        # Check installed simulators
+        def check_simulator(cmd):
+            try:
+                subprocess.run([cmd, "--version"], capture_output=True, shell=True, timeout=2)
+                return True
+            except:
+                try:
+                    subprocess.run([cmd, "-v"], capture_output=True, shell=True, timeout=2)
+                    return True
+                except:
+                    return False
+        
+        xyce_installed = check_simulator("Xyce")
+        iverilog_installed = check_simulator("iverilog")
+        ngspice_installed = check_simulator("ngspice")
+        
+        # Show installation status
+        with st.expander("🔧 Simulator Status"):
+            st.write(f"{'✅' if xyce_installed else '❌'} Xyce")
+            st.write(f"{'✅' if iverilog_installed else '❌'} Icarus Verilog")
+            st.write(f"{'✅' if ngspice_installed else '❌'} Ngspice")
+            if not any([xyce_installed, iverilog_installed, ngspice_installed]):
+                st.warning("No simulators installed. Install at least one to generate waveforms.")
+        
+        # Simulator selection
+        available_sims = []
+        if xyce_installed:
+            available_sims.append("Xyce")
+        if iverilog_installed:
+            available_sims.append("Icarus Verilog")
+        if ngspice_installed:
+            available_sims.append("Ngspice")
+        
+        if not available_sims:
+            available_sims = ["Xyce", "Icarus Verilog", "Ngspice"]  # Show all even if not installed
+        
+        # Custom Xyce path if not in PATH
+        xyce_custom_path = None
+        if "Xyce" in available_sims or not xyce_installed:
+            with st.expander("⚙️ Custom Xyce Path (if not in PATH)"):
+                xyce_custom_path = st.text_input(
+                    "Xyce executable path",
+                    placeholder="C:\\Program Files\\Xyce\\bin\\Xyce.exe",
+                    help="Full path to Xyce.exe if not in system PATH"
+                )
+        
+        simulator = st.radio(
+            "Simulator",
+            available_sims,
+            horizontal=True
+        )
+        sim_type = "xyce" if simulator == "Xyce" else ("iverilog" if simulator == "Icarus Verilog" else "ngspice")
+        
+        waveform_image = None
+        
+        if verilog_code:
+            # Step 1: Compile button
+            if sim_type == "iverilog":
+                compile_label = "🔨 Compile Verilog"
+            elif sim_type == "xyce":
+                compile_label = "🔨 Prepare Xyce Netlist"
+            else:
+                compile_label = "🔨 Prepare SPICE"
+            
+            if st.button(compile_label, use_container_width=True):
+                with st.spinner("Compiling..."):
+                    waveform_gen = WaveformGenerator(simulator=sim_type, xyce_path=xyce_custom_path if xyce_custom_path else None)
+                    success, msg = waveform_gen.compile_verilog(verilog_code)
+                    if success:
+                        st.success(f"✅ {msg}")
+                        st.session_state.verilog_compiled = True
+                        st.session_state.waveform_gen = waveform_gen
+                    else:
+                        st.error(f"❌ {msg}")
+                        st.session_state.verilog_compiled = False
+            
+            # Step 2: Generate waveform button (only if compiled)
+            if st.session_state.get('verilog_compiled', False):
+                if st.button("📈 Generate Waveform", use_container_width=True):
+                    with st.spinner("Generating waveform..."):
+                        waveform_gen = st.session_state.waveform_gen
+                        vcd_path, image_path, error_msg = waveform_gen.generate_waveform_from_sim()
+                        
+                        if image_path and os.path.exists(image_path):
+                            st.success("✅ Waveform generated")
+                            waveform_image = image_path
+                            st.session_state.waveform_image = image_path
+                        else:
+                            st.error(f"❌ {error_msg}")
+                            st.session_state.waveform_image = None
+            
+            # Always display waveform if available
+            if st.session_state.get('waveform_image') and os.path.exists(st.session_state.waveform_image):
+                st.image(st.session_state.waveform_image, caption="Generated Waveform", use_container_width=True)
+                waveform_image = st.session_state.waveform_image
+    
     st.divider()
     
-    return datasheet_path, verilog_code, datasheet_content
+    return datasheet_path, verilog_code, datasheet_content, waveform_image
 
 
 def workflow_visualization(current_step: Optional[str] = None, completed_steps: list = None):
@@ -356,7 +458,7 @@ def execution_section():
     return False
 
 
-def run_verification(agent: VerilogVerificationAgent, datasheet_path: str, verilog_code: str, datasheet_content: str = ""):
+def run_verification(agent: VerilogVerificationAgent, datasheet_path: str, verilog_code: str, datasheet_content: str = "", waveform_image: str = None):
     """Run the verification and display real-time progress"""
     
     if not verilog_code.strip():
@@ -385,11 +487,12 @@ def run_verification(agent: VerilogVerificationAgent, datasheet_path: str, veril
                     </div>
                     """, unsafe_allow_html=True)
         
-        # Run the agent
+        # Run the agent with waveform image if available
         final_state = agent.run(
             datasheet_path=datasheet_path,
             verilog_code=verilog_code,
-            datasheet_content=datasheet_content
+            datasheet_content=datasheet_content,
+            design_image_path=waveform_image  # Pass waveform as design image
         )
         
         return final_state
@@ -528,7 +631,13 @@ def main():
     config = sidebar_configuration()
     
     # Render input section
-    datasheet_path, verilog_code, datasheet_content = input_section()
+    datasheet_path, verilog_code, datasheet_content, waveform_image = input_section()
+    
+    # Store waveform in session state
+    if 'waveform_image' not in st.session_state:
+        st.session_state.waveform_image = None
+    if waveform_image:
+        st.session_state.waveform_image = waveform_image
     
     # Render workflow visualization
     workflow_visualization(st.session_state.current_step, st.session_state.completed_steps)
@@ -552,7 +661,8 @@ def main():
             st.session_state.agent,
             datasheet_path,
             verilog_code,
-            datasheet_content
+            datasheet_content,
+            st.session_state.get('waveform_image', None)
         )
         
         st.session_state.verification_state = verification_result
