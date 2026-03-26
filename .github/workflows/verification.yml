@@ -1,0 +1,36 @@
+name: VIGIL-AI Verification Agent
+
+on:
+  push:
+    paths:
+      - 'inputs/current_run.json'   # Triggers when the upload app pushes new inputs
+    branches:
+      - main
+
+jobs:
+  verify:
+    name: "🛡️ Run Verification Agent"
+    runs-on: ubuntu-latest
+
+    steps:
+      # ── 1. Checkout repo ──────────────────────────────────────────────────────
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ── 2. Set up Python ─────────────────────────────────────────────────────
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      # ── 3. Install dependencies ───────────────────────────────────────────────
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      # ── 4. Run verification agent ─────────────────────────────────────────────
+      - name: Run VIGIL-AI agent
+        env:
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+          GITHUB_TOKEN:   ${{ secrets.VIGIL_GITHUB_TOKEN }}
+        run: python agent_runner.py
