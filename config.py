@@ -19,11 +19,8 @@ class Config:
     MAX_ITERATIONS = int(os.getenv("MAX_ITERATIONS", "3"))   # keep lower to save quota
 
     # Model Settings — override via GEMINI_MODEL env var
-    # Free tier quotas (requests/day):
-    #   gemini-1.5-flash  → 1,500/day  ✅ recommended
-    #   gemini-2.0-flash  → 200/day
-    #   gemini-2.5-flash  → 20/day     (too low for CI use)
-    MODEL_NAME  = os.getenv("GEMINI_MODEL", "gemini-1.5-flash")
+    # Since gemini-1.5-flash is not found, we use gemini-2.0-flash
+    MODEL_NAME  = os.getenv("GEMINI_MODEL", "gemini-2.0-flash")
     TEMPERATURE = 0.2
     
     # Logging
