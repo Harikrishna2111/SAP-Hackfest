@@ -57,12 +57,22 @@ class GitHubClient:
             return False, None
 
     def _put_file(self, repo_path: str, content: str | bytes, message: str):
-        """Create or update a single file via the GitHub API."""
+        """Create or update a single file via the GitHub API.
+        Retries once with a fresh SHA if a 409 conflict is returned."""
         exists, sha = self._file_exists(repo_path)
-        if exists:
-            self._repo.update_file(repo_path, message, content, sha)
-        else:
-            self._repo.create_file(repo_path, message, content)
+        for attempt in range(3):
+            try:
+                if exists and sha:
+                    self._repo.update_file(repo_path, message, content, sha)
+                else:
+                    self._repo.create_file(repo_path, message, content)
+                return  # success
+            except GithubException as e:
+                if e.status == 409 and attempt < 2:
+                    # SHA stale — re-fetch and retry
+                    exists, sha = self._file_exists(repo_path)
+                    continue
+                raise
 
     # ── Run numbering ──────────────────────────────────────────────────────────
 
