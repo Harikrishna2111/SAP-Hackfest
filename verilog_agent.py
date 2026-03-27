@@ -52,12 +52,16 @@ class VerilogVerificationAgent:
         
         # Configure Gemini with new API
         self.client = genai.Client(api_key=api_key)
-        
+
+        # Read model name from config (allows override without changing this file)
+        from config import Config
+        model_name = Config.MODEL_NAME  # default: gemini-1.5-flash (1500 req/day free tier)
+
         # Initialize Gemini model
         self.model = ChatGoogleGenerativeAI(
-            model="gemini-2.5-flash",
+            model=model_name,
             google_api_key=api_key,
-            temperature=0.2  # Lower temperature for more consistent analysis
+            temperature=Config.TEMPERATURE,
         )
         
         # Build the graph
