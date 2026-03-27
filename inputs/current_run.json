@@ -2,5 +2,6 @@
   "run_id": "run_007",
   "spec_filename": "sample_sheet.pdf",
   "rtl_filename": "sample_design.v",
-  "uploaded_at": "2026-03-27 10:03 UTC"
+  "uploaded_at": "2026-03-27 10:03 UTC",
+  "triggered_at": "2026-03-27T10:20:09.895851"
 }
