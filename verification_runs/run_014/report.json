@@ -1,0 +1,17 @@
+{
+  "run_id": "run_014",
+  "timestamp": "2026-03-27T11:35:19.264107",
+  "spec_file": "sample_sheet.pdf",
+  "rtl_file": "sample_verilog.v",
+  "status": "error",
+  "iterations": 0,
+  "issues_found": 0,
+  "fixes_applied": 0,
+  "risk_level": "LOW",
+  "risk_counts": {
+    "high": 0,
+    "medium": 0,
+    "low": 0
+  },
+  "issues": []
+}
