@@ -1,0 +1,17 @@
+{
+  "run_id": "run_009",
+  "timestamp": "2026-03-27T10:45:20.019786",
+  "spec_file": "sample_sheet.pdf",
+  "rtl_file": "sample_design.v",
+  "status": "error",
+  "iterations": 0,
+  "issues_found": 0,
+  "fixes_applied": 0,
+  "risk_level": "LOW",
+  "risk_counts": {
+    "high": 0,
+    "medium": 0,
+    "low": 0
+  },
+  "issues": []
+}
