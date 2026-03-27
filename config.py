@@ -19,8 +19,8 @@ class Config:
     MAX_ITERATIONS = int(os.getenv("MAX_ITERATIONS", "3"))   # keep lower to save quota
 
     # Model Settings — override via GEMINI_MODEL env var
-    # Restored gemini-2.5-flash-lite for its high 1,500 daily requests quota
-    MODEL_NAME  = os.getenv("GEMINI_MODEL", "gemini-2.5-flash-lite")
+    # Switched to gemini-pro-latest because flash models are hitting strict 20 req/day limits
+    MODEL_NAME  = os.getenv("GEMINI_MODEL", "gemini-pro-latest")
     TEMPERATURE = 0.2
     
     # Logging
