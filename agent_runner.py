@@ -197,24 +197,27 @@ def main():
     # ── Build outputs ──────────────────────────────────────────────────────────
     report          = build_report(run_id, state, spec_filename, rtl_filename)
     risk_summary    = build_risk_summary(report)
+    fixed_rtl       = state.get("current_code", rtl_text)   # Full corrected code
     suggested_diff  = build_suggested_changes(
         state.get("verilog_code", rtl_text),
-        state.get("current_code", rtl_text),
+        fixed_rtl,
     )
     final_report_md = state.get("final_report", "No report generated.")
     log_text        = "\n".join(logs)
+
 
     # ── Commit results ─────────────────────────────────────────────────────────
     log(f"\nCommitting results to verification_runs/{run_id}/...")
 
     files_to_commit = {
         "input_spec" + Path(spec_filename).suffix: spec_bytes,
-        "input_rtl.v":          rtl_text,
-        "report.json":          json.dumps(report, indent=2),
-        "risk_summary.txt":     risk_summary,
-        "suggested_changes.v":  suggested_diff,
+        "input_rtl.v":            rtl_text,
+        "fixed_rtl.v":            fixed_rtl,       # ← Full corrected Verilog code
+        "report.json":            json.dumps(report, indent=2),
+        "risk_summary.txt":       risk_summary,
+        "suggested_changes.v":    suggested_diff,  # ← Diff view of what changed
         "verification_report.md": final_report_md,
-        "logs.txt":             log_text,
+        "logs.txt":               log_text,
     }
 
     try:

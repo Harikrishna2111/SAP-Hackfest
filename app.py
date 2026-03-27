@@ -248,13 +248,14 @@ with tab_runs:
 
             # ── File downloads ───────────────────────────────────────────────────
             st.markdown("**📥 Download Artifacts:**")
-            dc1, dc2, dc3, dc4 = st.columns(4)
+            dc1, dc2, dc3, dc4, dc5 = st.columns(5)
 
             for col, fname, label in [
                 (dc1, "risk_summary.txt",     "📄 Risk Summary"),
                 (dc2, "report.json",          "📊 Full Report"),
-                (dc3, "suggested_changes.v",  "🔧 Suggested Changes"),
-                (dc4, "verification_report.md","📝 Verification Report"),
+                (dc3, "fixed_rtl.v",          "✅ Fixed RTL"),
+                (dc4, "suggested_changes.v",  "🔧 Changes Diff"),
+                (dc5, "verification_report.md","📝 Full Report"),
             ]:
                 with col:
                     content = gh.get_run_file(run_id, fname)
