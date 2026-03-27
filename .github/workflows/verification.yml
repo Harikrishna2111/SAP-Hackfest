@@ -31,6 +31,6 @@ jobs:
       # ── 4. Run verification agent ─────────────────────────────────────────────
       - name: Run VIGIL-AI agent
         env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          GITHUB_TOKEN:      ${{ secrets.VIGIL_GITHUB_TOKEN }}
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+          GITHUB_TOKEN:   ${{ secrets.VIGIL_GITHUB_TOKEN }}
         run: python agent_runner.py
