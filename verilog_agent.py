@@ -275,8 +275,13 @@ class VerilogVerificationAgent:
         
         return state
     
-    def _parse_issues(self, response: str) -> List[dict]:
+    def _parse_issues(self, response) -> List[dict]:
         """Parse issues from LLM response"""
+        if isinstance(response, list):
+            response = "".join(str(item.get("text", item)) if isinstance(item, dict) else str(item) for item in response)
+        elif not isinstance(response, str):
+            response = str(response)
+
         issues = []
         
         # Extract number of issues
