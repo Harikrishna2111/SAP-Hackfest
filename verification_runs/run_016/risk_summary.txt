@@ -1,0 +1,15 @@
+VIGIL-AI Verification Risk Summary
+Run: run_016
+Date: 2026-03-27T12:16:25.119559
+Spec: sample_sheet.pdf
+RTL:  sample_design.v
+
+Overall Risk Level : LOW
+Status             : error
+Iterations         : 0
+Issues Found       : 0
+  HIGH   : 0
+  MEDIUM : 0
+  LOW    : 0
+
+--- Issues ---
