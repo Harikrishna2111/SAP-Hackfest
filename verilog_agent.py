@@ -105,6 +105,12 @@ class VerilogVerificationAgent:
         
         return workflow
     
+    def _get_text(self, content) -> str:
+        """Helper to extract text from LLM response which may be a list."""
+        if isinstance(content, list):
+            return "".join(str(item.get("text", item)) if isinstance(item, dict) else str(item) for item in content)
+        return str(content)
+
     def _extract_datasheet_content(self, datasheet_path: str) -> str:
         """Extract text content from PDF or text datasheet"""
         try:
@@ -153,7 +159,7 @@ class VerilogVerificationAgent:
             Provide a detailed technical summary focusing on aspects relevant to Verilog implementation.
             """
             
-            response = self.model.invoke(prompt).content
+            response = self._get_text(self.model.invoke(prompt).content)
             return response
             
         except Exception as e:
@@ -187,7 +193,7 @@ class VerilogVerificationAgent:
         ```
         """
         
-        code_analysis = self.model.invoke(code_analysis_prompt).content
+        code_analysis = self._get_text(self.model.invoke(code_analysis_prompt).content)
         
         # Combined analysis
         combined_analysis = f"""
@@ -263,7 +269,7 @@ class VerilogVerificationAgent:
         ISSUES_FOUND: 0
         """
         
-        response = self.model.invoke(prompt).content
+        response = self._get_text(self.model.invoke(prompt).content)
         
         # Parse issues
         issues = self._parse_issues(response)
@@ -275,13 +281,8 @@ class VerilogVerificationAgent:
         
         return state
     
-    def _parse_issues(self, response) -> List[dict]:
+    def _parse_issues(self, response: str) -> List[dict]:
         """Parse issues from LLM response"""
-        if isinstance(response, list):
-            response = "".join(str(item.get("text", item)) if isinstance(item, dict) else str(item) for item in response)
-        elif not isinstance(response, str):
-            response = str(response)
-
         issues = []
         
         # Extract number of issues
@@ -353,7 +354,7 @@ class VerilogVerificationAgent:
         Respond ONLY with the fixed Verilog code, no explanations outside the code.
         """
         
-        fixed_code = self.model.invoke(prompt).content
+        fixed_code = self._get_text(self.model.invoke(prompt).content)
         
         # Extract code from markdown if present
         if "```verilog" in fixed_code:
@@ -396,7 +397,7 @@ class VerilogVerificationAgent:
         Provide brief explanation.
         """
         
-        verification = self.model.invoke(prompt).content
+        verification = self._get_text(self.model.invoke(prompt).content)
         
         if "VERIFIED" in verification.upper():
             state["status"] = "verified"
@@ -476,7 +477,7 @@ class VerilogVerificationAgent:
         Format the report professionally with clear sections and bullet points.
         """
         
-        report = self.model.invoke(prompt).content
+        report = self._get_text(self.model.invoke(prompt).content)
         state["final_report"] = report
         
         print("✓ Report generated successfully")
